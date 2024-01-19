@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using ThrashGroups.Context;
+
 namespace ThrashGroups;
 
 public class Program
@@ -9,6 +12,11 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        var connectionString = builder.Configuration.GetConnectionString("Data");
+        
+        builder.Services.AddDbContext<ApplicationDbContext>(opt =>
+            opt.UseNpgsql(connectionString));
 
         var app = builder.Build();
 
@@ -22,7 +30,7 @@ public class Program
         app.UseHttpsRedirection();
 
         app.MapControllers();
-
+        
         app.Run();
     }
 }
