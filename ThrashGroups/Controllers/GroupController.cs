@@ -35,10 +35,68 @@ public class GroupController : ControllerBase
     }
     
     [HttpGet]
+    public async Task<IActionResult> GetStudentAcademicGroups(int studentId)
+    {
+        var result = await _context.StudentGroups
+            .Where(s => s.StudentId == studentId && s.Type == GroupType.AcademicGroup)
+            .Select(s => s.Group.Title)
+            .ToListAsync();
+        
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetStudentAdditionalStudyGroups(int studentId)
+    {
+        var result = await _context.StudentGroups
+            .Where(s => s.StudentId == studentId && s.Type == GroupType.AdditionalStudyGroup)
+            .Select(s => s.Group.Title)
+            .ToListAsync();
+        
+        return Ok(result);
+    }
+    
+    [HttpGet]
     public async Task<IActionResult> GetStudentUnderGroups(int studentId)
     {
-        var result = 1;
+        var result = await _context.Students
+            .Where(s => s.Id == studentId)
+            .SelectMany(s => s.StudentUnderGroups.Select(g => g.UnderGroup.Title))
+            .ToListAsync();
         
+        return Ok(result);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetStudentsAcademicGroup(int groupId)
+    {
+        var result = await _context.StudentGroups
+            .Where(s => s.GroupId == groupId && s.Type == GroupType.AcademicGroup)
+            .Select(s => s.Student.Lastname)
+            .ToListAsync();
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetStudentsAdditionalStudyGroup(int groupId)
+    {
+        var result = await _context.StudentGroups
+            .Where(s => s.GroupId == groupId && s.Type == GroupType.AdditionalStudyGroup)
+            .Select(s => s.Student.Lastname)
+            .ToListAsync();
+
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetStudentsUnderGroup(int groupId)
+    {
+        var result = await _context.StudentUnderGroups
+            .Where(u => u.UnderGroupId == groupId)
+            .Select(u => u.Student.Lastname)
+            .ToListAsync();
+
         return Ok(result);
     }
 }
